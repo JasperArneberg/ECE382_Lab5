@@ -21,10 +21,10 @@ The test5.c program was initally tested for the push of the "enter" button. The 
 
 Here is the code that sets up Timer A:
 ```
-	TAR = 0x0000;						// time measurements are based at time 0
-	TA0CCR0 = 0xFFFF;					// create a 16mS roll-over period
-	TACTL &= ~TAIFG;					// clear flag before enabling interrupts = good practice
-	TACTL = ID_3 | TASSEL_2 | MC_1;		// Use 1:1 presclar off MCLK and enable interrupts
+TAR = 0x0000;				// time measurements are based at time 0
+TA0CCR0 = 0xFFFF;			// create a 16mS roll-over period
+TACTL &= ~TAIFG;			// clear flag before enabling interrupts = good practice
+TACTL = ID_3 | TASSEL_2 | MC_1;		// Use 1:1 presclar off MCLK and enable interrupts
 ```
 
 With a clock speed of 8 MHz, TACCR0 equal to 65,535, and a clock divider of 8, this means that TAR will roll over every 65.536 msec. This should be plenty of time to receive and decode the packet.
