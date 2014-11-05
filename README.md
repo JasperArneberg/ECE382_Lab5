@@ -13,10 +13,10 @@ Capt Trimble
 
 The test5.c program was initally tested for the push of the "enter" button. The following data was captured in the time0 and time1 arrays.
 
-#####Time0 Array for Enter Button
+######Time0 Array for Enter Button
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/time0_array.png?raw=true "Time 0 Array")
 
-#####Time1 Array for Enter Button
+######Time1 Array for Enter Button
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/time1_array.png?raw=true "Time 1 Array")
 
 Here is the code that sets up Timer A:
@@ -44,23 +44,23 @@ Here is the code for lines 32-38:
 
 The following diagram shows where each line of code is executed in relation to the IR detector signal.
 
-#####Loop Diagram
+######Loop Diagram
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/loop_diagram.png?raw=true "Loop diagram")
 
 ###IR Data Packets
 The signal pin of the IR detector was next hooked up to a logic analyzer. Below is the waveform after the "enter" button was pressed. The signal corresponds with the values in the time0 and time1 arrays shown above.
 
-#####Logic Analyzer signal for Enter Button
+######Logic Analyzer signal for Enter Button
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/ir_packet.png?raw=true "IR packet when enter button is pressed")
 
 The lengths of the signals were measured on the logic analyzer. The cursors were moved to the rising and falling edges of the half-pulses, and then the time difference was recorded.
 
-#####Example Measurement of Half-Pulse Duration
+######Example Measurement of Half-Pulse Duration
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/example_measurement.png?raw=true "Example measurement")
 
 The following table compares the duration of the half-pulse versus the number of counts registered in Timer A. The values are close, but this table shows that Timer A is operating at a speed slightly slower than 8 MHz.
 
-#####Duration vs. Timer_A Counts
+######Duration vs. Timer_A Counts
 | Pulse                     | Duration (usec) | Timer A counts |
 |---------------------------|-----------------|----------------|
 | Start logic 0 half-pulse  | 9041            | 8940           |
@@ -74,7 +74,7 @@ The following table compares the duration of the half-pulse versus the number of
 
 In order to get a sense of the variance for the half-pulse signals, 8 samples of each type were collected. The mean and standard deviation of these samples were calculated as can be seen in the table below. The lower and upper limits were calculated as 5 standard deviations below and above the mean. Assuming a normal distribution, this means that 99.999943% of all samples will be within the range between the lower and upper limits.
 
-#####Mean and Standard Deviation of Half-Pulses
+######Mean and Standard Deviation of Half-Pulses
 |              | Data 0, logic 0 half-pulse | Data 1, logic 1 half-pulse | Data 0, logic 1 half-pulse |
 |--------------|----------------------------|----------------------------|----------------------------|
 | Mean         | 610.5                      | 1608.875                   | 496.5                      |
@@ -84,7 +84,7 @@ In order to get a sense of the variance for the half-pulse signals, 8 samples of
 
 As expected, pushing different buttons led to the creation of different packets. The packets were determined by observing the time1 array after pressing a button.
 
-#####Packets Generated for Different Button Presses
+######Packets Generated for Different Button Presses
 | Button | Packet (Binary)                     | Packet (Hex) |
 |--------|-------------------------------------|--------------|
 | 0      | 00100100 00011011 11010000 01101111 | 281BD06F     |
