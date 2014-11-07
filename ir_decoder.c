@@ -8,8 +8,9 @@
 #include "lab5.h"
 
 int8	newIrPacket = FALSE;
-int16	packetData[48];
+int16	packetData[32];
 int8	packetIndex = 0;
+int32	irPacket = 0;
 
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
@@ -20,6 +21,7 @@ void main(void) {
 	while(1)  {
 		if (packetIndex > 33) {
 			packetIndex = 0;
+			irPacket = 0; 		//reset irPacket
 		} // end if new IR packet arrived
 	} // end infinite loop
 } // end main
@@ -53,7 +55,7 @@ void initMSP430() {
 
 	HIGH_2_LOW;
 	P1DIR |= BIT0 | BIT6;				// Enable updates to the LED
-	P1OUT &= ~(BIT0 | BIT6);			// An turn the LED off
+	P1OUT &= ~(BIT0 | BIT6);			// And turn the LED off
 
 	TA0CCR0 = 0x8000;					// create a 16mS roll-over period
 	TACTL &= ~TAIFG;					// clear flag before enabling interrupts = good practice
@@ -98,8 +100,14 @@ __interrupt void pinChange (void) {
 	switch (pin) {					// read the current pin level
 		case 0:						// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
 			pulseDuration = TAR;
+
+			if (pulseDuration > 1000) {
+				irPacket += 1;
+			}
+			irPacket <<= 1; //shift one bit to the left
+
 			packetData[packetIndex++] = pulseDuration;
-			LOW_2_HIGH; 				// Setup pin interrupr on positive edge
+			LOW_2_HIGH; 				// Setup pin interrupt on positive edge
 			break;
 
 		case 1:							// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
@@ -125,5 +133,11 @@ __interrupt void pinChange (void) {
 #pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
 __interrupt void timerOverflow (void) {
 
+	packetIndex = 0;
+	newIrPacket = TRUE;
+	irPacket = 0;
+
 	TACTL &= ~TAIFG;
+
+
 }
