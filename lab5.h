@@ -45,13 +45,14 @@ __interrupt void timerOverflow (void);
 #define		minStartPulse		averageStartPulse - 100
 #define		maxStartPulse		averageStartPulse + 100
 
-#define		PWR		0x3C03F00F
-#define		ZER		0x281BD06F
-#define		ONE		0x003FC0FF
-#define		TWO		0x201FC07F
-#define		THR		0x102FC0BF
+#define		POWER	0x2BD53AC7
+#define		ZERO	0x61A0906F
+#define		ONE		0x61A000FF
+#define		TWO		0x61A0807F
+#define		THREE	0x61A040BF
+#define		ENTER	0x61A018E7
 
 #define		UP		0x61A050AF		//channel up
 #define		DOWN	0x61A0D02F		//channel down
-#define		LEFT	0x2C13F08F		//volume down
-#define		RIGHT	0x0C33F0CF		//volume up
+#define		LEFT	0x61A0B04F		//volume down
+#define		RIGHT	0x61A030CF		//volume up

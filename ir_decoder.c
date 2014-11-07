@@ -121,12 +121,20 @@ __interrupt void pinChange (void) {
 		irPacket = 0; 		//reset irPacket
 	} // end if new IR packet arrived
 
-	if (irPacket == DOWN) {
+	if (irPacket == UP) {
 		P1OUT |= BIT6;			//turn on green LED
 	}
 
-	if (irPacket == UP) {
-		P1OUT &= ~BIT6; 			//turn on red LED
+	if (irPacket == DOWN) {
+		P1OUT &= ~BIT6; 		//turn on green LED
+	}
+
+	if (irPacket == RIGHT) {
+		P1OUT |= BIT0;			//turn on red LED
+	}
+
+	if (irPacket == LEFT) {
+		P1OUT &= ~BIT0;			//turn off red LED
 	}
 
 
