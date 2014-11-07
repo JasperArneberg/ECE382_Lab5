@@ -35,8 +35,8 @@ __interrupt void timerOverflow (void);
 #define		LOW_2_HIGH		P2IES &= ~BIT6
 
 
-#define		averageLogic0Pulse	0x0200
-#define		averageLogic1Pulse	0x0645
+#define		averageLogic0Pulse	610
+#define		averageLogic1Pulse	496
 #define		averageStartPulse	0x1100
 #define		minLogic0Pulse		averageLogic0Pulse - 100
 #define		maxLogic0Pulse		averageLogic0Pulse + 100
@@ -45,12 +45,13 @@ __interrupt void timerOverflow (void);
 #define		minStartPulse		averageStartPulse - 100
 #define		maxStartPulse		averageStartPulse + 100
 
-#define		PWR		0x02FD48B7
-#define		ONE		0x02FD807F
-#define		TWO		0x02FD40BF
-#define		THR		0x02FDC03F
+#define		PWR		0x3C03F00F
+#define		ZER		0x281BD06F
+#define		ONE		0x003FC0FF
+#define		TWO		0x201FC07F
+#define		THR		0x102FC0BF
 
-#define		VOL_UP	0x02FD58A7
-#define		VOL_DW	0x02FD7887
-#define		CH_UP	0x02FDD827
-#define		CH_DW	0x02FDF807
+#define		UP		0x61A050AF		//channel up
+#define		DOWN	0x61A0D02F		//channel down
+#define		LEFT	0x2C13F08F		//volume down
+#define		RIGHT	0x0C33F0CF		//volume up

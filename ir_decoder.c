@@ -17,12 +17,10 @@ int32	irPacket = 0;
 void main(void) {
 
 	initMSP430();				// Setup MSP to process IR and buttons
+	packetIndex=0;
 
 	while(1)  {
-		if (packetIndex > 33) {
-			packetIndex = 0;
-			irPacket = 0; 		//reset irPacket
-		} // end if new IR packet arrived
+
 	} // end infinite loop
 } // end main
 
@@ -101,10 +99,10 @@ __interrupt void pinChange (void) {
 		case 0:						// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
 			pulseDuration = TAR;
 
+			irPacket <<= 1; //shift one bit to the left
 			if (pulseDuration > 1000) {
 				irPacket += 1;
 			}
-			irPacket <<= 1; //shift one bit to the left
 
 			packetData[packetIndex++] = pulseDuration;
 			LOW_2_HIGH; 				// Setup pin interrupt on positive edge
@@ -117,6 +115,21 @@ __interrupt void pinChange (void) {
 	} // end switch
 
 	P2IFG &= ~BIT6;			// Clear the interrupt flag to prevent immediate ISR re-entry
+
+	if (packetIndex > 33) {
+		packetIndex = 0;
+		irPacket = 0; 		//reset irPacket
+	} // end if new IR packet arrived
+
+	if (irPacket == DOWN) {
+		P1OUT |= BIT6;			//turn on green LED
+	}
+
+	if (irPacket == UP) {
+		P1OUT &= ~BIT6; 			//turn on red LED
+	}
+
+
 
 } // end pinChange ISR
 
@@ -133,11 +146,9 @@ __interrupt void pinChange (void) {
 #pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
 __interrupt void timerOverflow (void) {
 
+
 	packetIndex = 0;
 	newIrPacket = TRUE;
-	irPacket = 0;
-
 	TACTL &= ~TAIFG;
-
 
 }
