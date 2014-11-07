@@ -20,6 +20,25 @@ void main(void) {
 	packetIndex=0;
 
 	while(1)  {
+		if (newIrPacket==TRUE) {
+			newIrPacket==FALSE;			//reset flag
+
+			if (irPacket == UP) {
+				P1OUT |= BIT6;			//turn on green LED
+			}
+
+			if (irPacket == DOWN) {
+				P1OUT &= ~BIT6; 		//turn on green LED
+			}
+
+			if (irPacket == RIGHT) {
+				P1OUT |= BIT0;			//turn on red LED
+			}
+
+			if (irPacket == LEFT) {
+				P1OUT &= ~BIT0;			//turn off red LED
+			}
+		}
 
 	} // end infinite loop
 } // end main
@@ -110,38 +129,20 @@ __interrupt void pinChange (void) {
 
 		case 1:							// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
 			TAR = 0x0000;						// time measurements are based at time 0
-			HIGH_2_LOW; 						// Setup pin interrupr on positive edge
+			HIGH_2_LOW; 						// Setup pin interrupt on positive edge
+			TACTL |= TAIE;						//enable interrupt
 			break;
 	} // end switch
 
 	P2IFG &= ~BIT6;			// Clear the interrupt flag to prevent immediate ISR re-entry
 
-	if (packetIndex > 33) {
+	/*if (packetIndex > 33) {
 		packetIndex = 0;
 		irPacket = 0; 		//reset irPacket
 	} // end if new IR packet arrived
-
-	if (irPacket == UP) {
-		P1OUT |= BIT6;			//turn on green LED
-	}
-
-	if (irPacket == DOWN) {
-		P1OUT &= ~BIT6; 		//turn on green LED
-	}
-
-	if (irPacket == RIGHT) {
-		P1OUT |= BIT0;			//turn on red LED
-	}
-
-	if (irPacket == LEFT) {
-		P1OUT &= ~BIT0;			//turn off red LED
-	}
-
-
+	*/
 
 } // end pinChange ISR
-
-
 
 // -----------------------------------------------------------------------
 //			0 half-bit	1 half-bit		TIMER A COUNTS		TIMER A COUNTS
@@ -153,9 +154,8 @@ __interrupt void pinChange (void) {
 // -----------------------------------------------------------------------
 #pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
 __interrupt void timerOverflow (void) {
-
-
-	packetIndex = 0;
+	TACTL &= ~TAIE;							//disable Timer A interrupt
+	packetIndex = 0;						//reset packet index
 	newIrPacket = TRUE;
 	TACTL &= ~TAIFG;
 
