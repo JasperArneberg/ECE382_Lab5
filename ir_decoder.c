@@ -7,6 +7,7 @@
 #include <msp430g2553.h>
 #include "lab5.h"
 
+int8	newIrPacket = FALSE;
 int16	packetData[32];
 int8	packetIndex = 0;
 int32	irPacket = 0;
@@ -14,8 +15,12 @@ int32	irPacket = 0;
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
 void main(void) {
+
 	initMSP430();				// Setup MSP to process IR and buttons
+	packetIndex=0;
+
 	while(1)  {
+
 	} // end infinite loop
 } // end main
 
@@ -34,13 +39,13 @@ void main(void) {
 // -----------------------------------------------------------------------
 void initMSP430() {
 
-	IFG1=0; 							// clear interrupt flag1
-	WDTCTL=WDTPW+WDTHOLD; 				// stop WD
+	IFG1=0; 					// clear interrupt flag1
+	WDTCTL=WDTPW+WDTHOLD; 		// stop WD
 
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
 
-	P2SEL  &= ~BIT6;					// Setup P2.6 as GPIO not XIN
+	P2SEL  &= ~BIT6;						// Setup P2.6 as GPIO not XIN
 	P2SEL2 &= ~BIT6;
 	P2DIR &= ~BIT6;
 	P2IFG &= ~BIT6;						// Clear any interrupt flag
@@ -81,27 +86,29 @@ void initMSP430() {
 // Since the duration of this half-bit determines the outcome
 // we will turn on the timer and its associated interrupt.
 // -----------------------------------------------------------------------
-#pragma vector = PORT2_VECTOR					// This is from the MSP430G2553.h file
+#pragma vector = PORT2_VECTOR			// This is from the MSP430G2553.h file
 
 __interrupt void pinChange (void) {
 
 	int8	pin;
-	int16	pulseDuration;						// The timer is 16-bits
+	int16	pulseDuration;			// The timer is 16-bits
 
 	if (IR_PIN)		pin=1;	else pin=0;
 
-	switch (pin) {								// read the current pin level
-		case 0:									// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
+	switch (pin) {					// read the current pin level
+		case 0:						// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
 			pulseDuration = TAR;
-			irPacket <<= 1; 					//shift one bit to the left
+
+			irPacket <<= 1; //shift one bit to the left
 			if (pulseDuration > 1000) {
-				irPacket += 1;					//store a 1 if you need to
+				irPacket += 1;
 			}
+
 			packetData[packetIndex++] = pulseDuration;
-			LOW_2_HIGH; 						// Setup pin interrupt on positive edge
+			LOW_2_HIGH; 				// Setup pin interrupt on positive edge
 			break;
 
-		case 1:									// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
+		case 1:							// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
 			TAR = 0x0000;						// time measurements are based at time 0
 			HIGH_2_LOW; 						// Setup pin interrupr on positive edge
 			break;
@@ -130,6 +137,8 @@ __interrupt void pinChange (void) {
 		P1OUT &= ~BIT0;			//turn off red LED
 	}
 
+
+
 } // end pinChange ISR
 
 
@@ -144,5 +153,10 @@ __interrupt void pinChange (void) {
 // -----------------------------------------------------------------------
 #pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
 __interrupt void timerOverflow (void) {
+
+
+	packetIndex = 0;
+	newIrPacket = TRUE;
 	TACTL &= ~TAIFG;
+
 }
