@@ -1,9 +1,11 @@
-//-----------------------------------------------------------------
-// Name:	Coulston
-// File:	lab5.h
-// Date:	Fall 2014
-// Purp:	Include file for the MSP430
-//-----------------------------------------------------------------
+/*******************************************
+  * Title: Lab 5: IR Remote Controller
+  * Author: C2C Jasper Arneberg
+  * Created: 7 November 2014
+  * Description: This header file defines all data structures and
+  * constants for use in the ir_decoder.c and ir_etch.c programs.
+  * These programs are controlled by an external IR remote controller.
+*******************************************/
 
 //-----------------------------------------------------------------
 // Page 76 : MSP430 Optimizing C/C++ Compiler v 4.3 User's Guide
