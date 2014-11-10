@@ -20,44 +20,44 @@ int8	x, y, color;
 void main() {
 	// === Initialize system ================================================
 	initMSP430();
-	initLCD();
+	init();
+	initNokia();
+
+	color=BLACK;
+	clearDisplay(color);
+	x=4;
+	y=4;
+	drawBlock(y,x,color);
 	packetIndex=0;
+	initMSP430();
 
 	while(1) {
 
 		if (newIrPacket==TRUE) {
-			newIrPacket==FALSE;			//reset flag
+			newIrPacket = FALSE;		//reset flag
+			_disable_interrupt();		//disable while drawing
 
 			if (irPacket == UP) {
-				P1OUT |= BIT6;			//turn on green LED
 				if (y>=1) y=y-1;
-			}
-
-			if (irPacket == DOWN) {
-				P1OUT &= ~BIT6; 		//turn on green LED
+			} else if (irPacket == DOWN) {
 				if (y<=6) y=y+1;
-			}
-
-			if (irPacket == RIGHT) {
-				P1OUT |= BIT0;			//turn on red LED
+			} else if (irPacket == RIGHT) {
 				if (x<=10) x=x+1;
-			}
-
-			if (irPacket == LEFT) {
-				P1OUT &= ~BIT0;			//turn off red LED
+			} else if (irPacket == LEFT) {
 				if (x>=1) x=x-1;
-			}
-
-			drawBlock(y,x,color);
-
-			if (irPacket == ENTER) {
-				if (color==WHITE) {						//toggle the color
+			} else if (irPacket == ENTER) {
+				if (color==WHITE) {		//toggle the color
 					color = BLACK;
 				} else {
 					color = WHITE;
 				}
 			}
 
+			init();
+			initNokia();				//reinitialize nokia before lcd can display
+			drawBlock(y,x,color);
+			//__delay_cycles(2000000);
+			initMSP430();				//prepare for next interrupt
 		}
 	}
 }
@@ -100,15 +100,6 @@ void initMSP430() {
 	_enable_interrupt();
 }
 
-void initLCD() {
-	color = BLACK;
-
-	init();
-	initNokia();
-	clearDisplay(BLACK);
-	x=4;		y=4;
-	drawBlock(y,x,color);
-}
 
 /**
  * Pin change vector
@@ -130,14 +121,15 @@ __interrupt void pinChange (void) {
 			if (pulseDuration > minLogic1Pulse) {
 				irPacket += 1;			//logical 1
 			}
-
 			packetData[packetIndex++] = pulseDuration;
+			TACTL |= MC_0;				//disable timerA
 			LOW_2_HIGH; 				// Setup pin interrupt on positive edge
 			break;
 
 		case 1:							// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
 			TAR = 0x0000;				// time measurements are based at time 0
 			HIGH_2_LOW; 				// Setup pin interrupt on positive edge
+			TACTL |= MC_1;				//enable timerA
 			TACTL |= TAIE;				//enable timer A interrupt
 			break;
 	} // end switch
@@ -154,10 +146,12 @@ __interrupt void pinChange (void) {
 //	End
 //
 // -----------------------------------------------------------------------
+
 #pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
 __interrupt void timerOverflow (void) {
 	TACTL &= ~TAIE;							//disable Timer A interrupt
 	packetIndex = 0;						//reset packet index
 	newIrPacket = TRUE;						//new packet must have arrived
+	TACTL |= MC_0;							//disable timerA
 	TACTL &= ~TAIFG;
 }
