@@ -1,9 +1,8 @@
 //-----------------------------------------------------------------
-// Name:	Jasper Arneberg
-// File:	ir_decoder.c
-// Date:	7 November 2014
-// Purp:	Turn on and off LEDs with the press of a remote control.
-//			This code was modified from code provided by Dr. Coulston.
+// Name:	Coulston
+// File:	lab5.c
+// Date:	Fall 2014
+// Purp:	Demo the decoding of an IR packet
 //-----------------------------------------------------------------
 #include <msp430g2553.h>
 #include "lab5.h"
@@ -17,7 +16,7 @@ int32	irPacket = 0;
 // -----------------------------------------------------------------------
 void main(void) {
 
-	initMSP430();						// Setup MSP to process IR and buttons
+	initMSP430();				// Setup MSP to process IR and buttons
 	packetIndex=0;
 
 	while(1)  {
@@ -59,13 +58,13 @@ void main(void) {
 // -----------------------------------------------------------------------
 void initMSP430() {
 
-	IFG1=0; 							// clear interrupt flag1
-	WDTCTL=WDTPW+WDTHOLD; 				// stop WD
+	IFG1=0; 					// clear interrupt flag1
+	WDTCTL=WDTPW+WDTHOLD; 		// stop WD
 
 	BCSCTL1 = CALBC1_8MHZ;
 	DCOCTL = CALDCO_8MHZ;
 
-	P2SEL  &= ~BIT6;					// Setup P2.6 as GPIO not XIN
+	P2SEL  &= ~BIT6;						// Setup P2.6 as GPIO not XIN
 	P2SEL2 &= ~BIT6;
 	P2DIR &= ~BIT6;
 	P2IFG &= ~BIT6;						// Clear any interrupt flag
@@ -111,17 +110,17 @@ void initMSP430() {
 __interrupt void pinChange (void) {
 
 	int8	pin;
-	int16	pulseDuration;				// The timer is 16-bits
+	int16	pulseDuration;			// The timer is 16-bits
 
 	if (IR_PIN)		pin=1;	else pin=0;
 
-	switch (pin) {						// read the current pin level
-		case 0:							// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
+	switch (pin) {					// read the current pin level
+		case 0:						// !!!!!!!!!NEGATIVE EDGE!!!!!!!!!!
 			pulseDuration = TAR;
 
-			irPacket <<= 1; 			//shift one bit to the left
-			if (pulseDuration > minLogic1Pulse && pulseDuration < maxLogic1Pulse ) {
-				irPacket += 1;			//logical 1
+			irPacket <<= 1; //shift one bit to the left
+			if (pulseDuration > 1000) {
+				irPacket += 1;
 			}
 
 			packetData[packetIndex++] = pulseDuration;
@@ -129,13 +128,13 @@ __interrupt void pinChange (void) {
 			break;
 
 		case 1:							// !!!!!!!!POSITIVE EDGE!!!!!!!!!!!
-			TAR = 0x0000;				// time measurements are based at time 0
-			HIGH_2_LOW; 				// Setup pin interrupt on positive edge
-			TACTL |= TAIE;				//enable timer A interrupt
+			TAR = 0x0000;						// time measurements are based at time 0
+			HIGH_2_LOW; 						// Setup pin interrupt on positive edge
+			TACTL |= TAIE;						//enable interrupt
 			break;
 	} // end switch
 
-	P2IFG &= ~BIT6;						// Clear the interrupt flag to prevent immediate ISR re-entry
+	P2IFG &= ~BIT6;			// Clear the interrupt flag to prevent immediate ISR re-entry
 
 	/*if (packetIndex > 33) {
 		packetIndex = 0;
@@ -157,6 +156,7 @@ __interrupt void pinChange (void) {
 __interrupt void timerOverflow (void) {
 	TACTL &= ~TAIE;							//disable Timer A interrupt
 	packetIndex = 0;						//reset packet index
-	newIrPacket = TRUE;						//new packet must have arrived
+	newIrPacket = TRUE;
 	TACTL &= ~TAIFG;
+
 }
