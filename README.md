@@ -97,5 +97,18 @@ As expected, pushing different buttons led to the creation of different packets.
 | CH +   | 00010100 00101011 11010000 10101111 | 182BD0AF     |
 | CH -   | 01100001 10100000 11010000 00101111 | 61A0D02F     |
 
+###Debugging
+This line of code was creating a problem:
+```
+if (newIrPacket==TRUE) {
+			newIrPacket==FALSE;		//reset flag
+```
+
+The problem was that the newIrPacket variable was never actually reset. Rather, the microcontroller saw a meaningless expression. Here is the correct code:
+```
+if (newIrPacket==TRUE) {
+			newIrPacket = FALSE;		//reset flag
+```
+
 ##Documentation
 I used http://www.tablesgenerator.com/markdown_tables to generate markdown tables efficiently. 
