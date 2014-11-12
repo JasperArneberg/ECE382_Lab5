@@ -7,7 +7,7 @@ C2C Jasper Arneberg
 T5 ECE 382  
 Capt Trimble  
 
-##Day 1 Lab
+##Day 1 Lab: Investigating IR Pulses
 
 ###Timer Counts
 
@@ -97,18 +97,61 @@ As expected, pushing different buttons led to the creation of different packets.
 | CH +   | 00010100 00101011 11010000 10101111 | 182BD0AF     |
 | CH -   | 01100001 10100000 11010000 00101111 | 61A0D02F     |
 
+##Day 2 Lab: Basic Functionality
+The basic functionality entailed turning on and off two different LEDs with button presses on the remote. This is the code in the main loop which accomplished that:
+```
+if (newIrPacket==TRUE) {
+	newIrPacket==FALSE;			//reset flag
+
+	if (irPacket == UP) {
+		P1OUT |= BIT6;			//turn on green LED
+	}
+
+	if (irPacket == DOWN) {
+		P1OUT &= ~BIT6; 		//turn on green LED
+	}
+
+	if (irPacket == RIGHT) {
+		P1OUT |= BIT0;			//turn on red LED
+	}
+
+	if (irPacket == LEFT) {
+		P1OUT &= ~BIT0;			//turn off red LED
+	}
+}
+```
+
+##Day 3 Lab: A Functionality
+The A functionality required implementing the IR program with the etch-a-sketch program from Lab 4. For the most part, this process was fairly straightforward. However, many challenges were encountered, some of which can be seen in the Debugging section below.
+
 ###Debugging
 This line of code was creating a problem:
 ```
 if (newIrPacket==TRUE) {
-			newIrPacket==FALSE;		//reset flag
+	newIrPacket==FALSE;		//reset flag
 ```
 
 The problem was that the newIrPacket variable was never actually reset. Rather, the microcontroller saw a meaningless expression. Here is the correct code:
 ```
 if (newIrPacket==TRUE) {
-			newIrPacket = FALSE;		//reset flag
+	newIrPacket = FALSE;		//reset flag
+```
+
+One problem with the A functionality was related to re-initialization of the MSP430. Since the Nokia LCD and the IR sensor both share a pin, it is crucially important to re-initialize the pin settings before and after drawing a block on the LCD. Every time the drawBlock() method was called, it was surrounded by initializations as can be seen below.
+```
+init();
+initNokia();				//reinitialize nokia before lcd can display
+drawBlock(y,x,color);
+initMSP430();				//prepare for next interrupt
+```
+
+There was a serious problem with the initial A functionality. Whenever one of the arrow buttons on the remote was pressed, the block was drawn in a semi-random location on the screen. After hours of debugging, C2C Brian Yarbrough took one look at the program and noticed that the x, y, and color variables were global, and that he had a similar problem with that. Once the variables were initialized within the main loop, the program worked as expected.
+```
+int8 x = 4;
+int8 y = 4;
+int8 color = BLACK;
 ```
 
 ##Documentation
 I used http://www.tablesgenerator.com/markdown_tables to generate markdown tables efficiently. 
+C2C Brian Yarbrough looked at my program and helped me debug certain lines such as re-initialization and keeping the block variables localized.
