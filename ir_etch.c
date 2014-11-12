@@ -15,18 +15,19 @@ int16	packetData[32];
 int8	packetIndex = 0;
 int32	irPacket = 0;
 
-int8	x, y, color;
 
-void main() {
+
+  void main() {
 	// === Initialize system ================================================
 	initMSP430();
 	init();
 	initNokia();
 
-	color=BLACK;
+	int8 x = 4;
+	int8 y = 4;
+	int8 color = BLACK;
+
 	clearDisplay(color);
-	x=4;
-	y=4;
 	drawBlock(y,x,color);
 	packetIndex=0;
 	initMSP430();
@@ -55,6 +56,7 @@ void main() {
 
 			init();
 			initNokia();				//reinitialize nokia before lcd can display
+			//clearDisplay(color);
 			drawBlock(y,x,color);
 			//__delay_cycles(2000000);
 			initMSP430();				//prepare for next interrupt
@@ -90,10 +92,10 @@ void initMSP430() {
 	P2IE  |= BIT6;						// Enable PORT 2 interrupt on pin change
 
 	HIGH_2_LOW;
-	P1DIR |= BIT0 | BIT6;				// Enable updates to the LED
-	P1OUT &= ~(BIT0 | BIT6);			// And turn the LED off
+	//P1DIR |= BIT0 | BIT6;				// Enable updates to the LED
+	//P1OUT &= ~(BIT0 | BIT6);			// And turn the LED off
 
-	TA0CCR0 = 0x8000;					// create a 16mS roll-over period
+	TA0CCR0 = 0xFFFF;					// create a 16mS roll-over period
 	TACTL &= ~TAIFG;					// clear flag before enabling interrupts = good practice
 	TACTL = ID_3 | TASSEL_2 | MC_1;		// Use 1:1 presclar off MCLK and enable interrupts
 
