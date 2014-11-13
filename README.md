@@ -7,13 +7,13 @@ C2C Jasper Arneberg
 T5 ECE 382  
 Capt Trimble  
 
-##Introduction and Purpose
+##Introduction
 Infrared remote controllers can be found in every household and classroom in America today. How they work is a profound mystery to most people. This lab seeks to discover how an infrared signal is transmitted and then use that to program a microcontroller to accomplish various tasks. 
 
 ##Day 1 Lab: Investigating IR Pulses
 
 ###Timer Counts
-The test5.c program was initally tested for the push of the "enter" button. The following data was captured in the time0 and time1 arrays.
+The test5.c program was initally tested for the push of the "enter" button. The following data was captured in the time0 and time1 arrays. In general, the time0 values were fairly consistent. The time1 values corresponded with their logical value of 1 or 0.
 
 ######Time0 Array for Enter Button
 ![alt text](https://github.com/JasperArneberg/ECE382_Lab5/blob/master/time0_array.png?raw=true "Time 0 Array")
