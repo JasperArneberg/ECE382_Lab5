@@ -137,7 +137,7 @@ __interrupt void timerOverflow (void) {
 ##Day 3 Lab: A Functionality
 The A functionality required implementing the IR program with the etch-a-sketch program from Lab 4. For the most part, this process was fairly straightforward. However, many challenges were encountered, some of which can be seen in the Debugging section below. 
 
-###Debugging
+##Debugging
 This line of code was creating a problem:
 ```
 if (newIrPacket==TRUE) {
