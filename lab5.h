@@ -25,20 +25,17 @@ void initMSP430();
 __interrupt void pinChange (void);
 __interrupt void timerOverflow (void);
 
-
 //-----------------------------------------------------------------
 // Each PxIES bit selects the interrupt edge for the corresponding I/O pin.
 //	Bit = 0: The PxIFGx flag is set with a low-to-high transition
 //	Bit = 1: The PxIFGx flag is set with a high-to-low transition
 //-----------------------------------------------------------------
-
 #define		IR_PIN			(P2IN & BIT6)
 #define		HIGH_2_LOW		P2IES |= BIT6
 #define		LOW_2_HIGH		P2IES &= ~BIT6
 
-
-#define		averageLogic0Pulse	610
-#define		averageLogic1Pulse	496
+#define		averageLogic0Pulse	610		//as determined with 8 samples
+#define		averageLogic1Pulse	1496
 #define		averageStartPulse	0x1100
 #define		minLogic0Pulse		averageLogic0Pulse - 100
 #define		maxLogic0Pulse		averageLogic0Pulse + 100
@@ -54,7 +51,26 @@ __interrupt void timerOverflow (void);
 #define		THREE	0x61A040BF
 #define		ENTER	0x61A018E7
 
-#define		UP		0x61A050AF		//channel up
-#define		DOWN	0x61A0D02F		//channel down
-#define		LEFT	0x61A0B04F		//volume down
-#define		RIGHT	0x61A030CF		//volume up
+#define		UP		0x61A050AF			//channel up
+#define		DOWN	0x61A0D02F			//channel down
+#define		LEFT	0x61A0B04F			//volume down
+#define		RIGHT	0x61A030CF			//volume up
+
+
+//A Functionality below this line
+
+extern void init();
+extern void initNokia();
+extern void clearDisplay(unsigned char color);
+extern void drawBlock(unsigned char row, unsigned char col, unsigned char color);
+
+#define		UP_BUTTON		(P2IN & BIT5)
+#define		DOWN_BUTTON		(P2IN & BIT4)
+#define		AUX_BUTTON		(P2IN & BIT3)
+#define		LEFT_BUTTON		(P2IN & BIT2)
+#define		RIGHT_BUTTON	(P2IN & BIT1)
+#define		WHITE			0
+#define		BLACK			1
+
+#define 	HEIGHT 			11			//dimension of display
+#define 	WIDTH 			7

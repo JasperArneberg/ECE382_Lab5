@@ -3,9 +3,9 @@
 //	Term:		Fall 2014
 //	MCU:		MSP430G2553
 //	Lecture:	22
-//	Date:		21 October 2014
-//	Note:		This code was developed from Dr. Coulston's original example of how
-//				to combine C and assembly.
+//	Date:		12 November 2014
+//	Note:		This code implements an IR remote controller with the etch-a-sketch
+//				program originally developed in Lab 4.
 //-------------------------------------------------------------------------------
 #include <msp430g2553.h>
 #include "lab5.h"
@@ -15,22 +15,20 @@ int16	packetData[32];
 int8	packetIndex = 0;
 int32	irPacket = 0;
 
-
-
   void main() {
 	// === Initialize system ================================================
 	initMSP430();
 	init();
 	initNokia();
 
-	int8 x = 4;
+	int8 x = 4;							//declared inside main loop
 	int8 y = 4;
 	int8 color = BLACK;
 
 	clearDisplay(color);
 	drawBlock(y,x,color);
 	packetIndex=0;
-	initMSP430();
+	initMSP430();						//reinitialize to wait for interrupts
 
 	while(1) {
 
