@@ -7,10 +7,12 @@ C2C Jasper Arneberg
 T5 ECE 382  
 Capt Trimble  
 
+##Introduction and Purpose
+Infrared remote controllers can be found in every household and classroom in America today. How they work is a profound mystery to most people. This lab seeks to discover how an infrared signal is transmitted and then use that to program a microcontroller to accomplish various tasks. 
+
 ##Day 1 Lab: Investigating IR Pulses
 
 ###Timer Counts
-
 The test5.c program was initally tested for the push of the "enter" button. The following data was captured in the time0 and time1 arrays.
 
 ######Time0 Array for Enter Button
@@ -121,8 +123,19 @@ if (newIrPacket==TRUE) {
 }
 ```
 
+The newIrPacket flag was set in the Timer A interrupt. This interrupt was only allowed to occur when a new packet arrived.
+```
+#pragma vector = TIMER0_A1_VECTOR			// This is from the MSP430G2553.h file
+__interrupt void timerOverflow (void) {
+	TACTL &= ~TAIE;							//disable Timer A interrupt
+	packetIndex = 0;						//reset packet index
+	newIrPacket = TRUE;						//new packet must have arrived
+	TACTL &= ~TAIFG;
+}
+```
+
 ##Day 3 Lab: A Functionality
-The A functionality required implementing the IR program with the etch-a-sketch program from Lab 4. For the most part, this process was fairly straightforward. However, many challenges were encountered, some of which can be seen in the Debugging section below.
+The A functionality required implementing the IR program with the etch-a-sketch program from Lab 4. For the most part, this process was fairly straightforward. However, many challenges were encountered, some of which can be seen in the Debugging section below. 
 
 ###Debugging
 This line of code was creating a problem:
@@ -151,6 +164,11 @@ int8 x = 4;
 int8 y = 4;
 int8 color = BLACK;
 ```
+
+##Conclusion
+In conclusion, this laboratory exercise was reverse engineering at its finest. It investigated how infrared remote controllers function, and it applied this knowledge to the MSP430. In order to interpret the infrared signal, Timer A on the MSP430 was used extensively. Additionally, interrupts were required in order for the microcontroller to recognize that a new packet of data was received.
+
+Although the basic and A functionalities were achieved, there is still much to be learned when dealing with IR remote controllers. One of the problems that was never resolved was that the blocks were never perfectly 8x8. The pixels in the row immediately adjacent to the block would randomly make strange patterns. Even Capt Trimble didn't know what caused this.
 
 ##Documentation
 I used http://www.tablesgenerator.com/markdown_tables to generate markdown tables efficiently. 
